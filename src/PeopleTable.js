@@ -7,7 +7,8 @@ class PeopleTable extends React.Component {
 
     this.state = {
       people: [],
-      pointers: []
+      pointers: [],
+      sortedBy: { attribute: '', wasSorted: false }
     };
   };
 
@@ -44,33 +45,85 @@ class PeopleTable extends React.Component {
   };
 
   sortFunc = (attribute) => {
-    const { people, pointers } = this.state;
+    const { people, pointers, sortedBy } = this.state;
+    const sortedByNamePointers = () => pointers.sort(
+      (a, b) => (
+        people[a.pointer].name.localeCompare(
+            people[b.pointer].name
+          )
+      ));
+    const sortedByNumberPointers = () => pointers.sort(
+      (a, b) => (
+        people[a.pointer][attribute] - people[b.pointer][attribute]
+    ))  
+
+
+    if (!sortedBy.attribute) {
+      this.setState({
+        sortedBy: { attribute: attribute, wasSorted: false }
+      });
+    };
+
+    // дальше проверка нужна, чтобы сортировка сначала шла
+    // в направлении сверху вниз, каждый раз, когда пользователь
+    // изменяет атрибут сортировки
+    if (sortedBy.attribute !== attribute) {
+      this.setState({
+        sortedBy: { attribute: attribute, wasSorted: false }
+      });
+      // тут не меняется значение wasSorted
+      // из-за асинхронного обновления состояния (как я думаю),
+      // из-за чего функция дальше работает не совсем корректно
+      // функциональный setState тоже не помогает:
+      //
+      // if (sortedBy.attribute !== attribute) {
+      //   this.setState(() => ({
+      //     sortedBy: { attribute: attribute, wasSorted: false }
+      //   }));
+      // };
+      //
+      // так что тут я застрял, помогите, пжлста :)
+    };
 
     switch (attribute) {
       case 'name':
+        if (!sortedBy.wasSorted) {
+          this.setState({
+            pointers: sortedByNamePointers(),
+            sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
+          });
+          break;
+        };
+
         this.setState({
-          pointers: pointers.sort(
-            (a, b) => (
-              people[a.pointer].name.localeCompare(
-                  people[b.pointer].name
-                )
-            )
-        )});
+          pointers: sortedByNamePointers().reverse(),
+          sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
+        });
         break;
+
       case 'id':  
       case 'born':
       case 'died':
       case 'age':
+        if (!sortedBy.wasSorted) {
+          this.setState({
+            pointers: sortedByNumberPointers(),
+            sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
+          });
+          break;
+        };
+
         this.setState({
-          pointers: pointers.sort(
-            (a, b) => (
-              people[a.pointer][attribute] - people[b.pointer][attribute]
-            )
-        )});
+          pointers: sortedByNumberPointers().reverse(),
+          sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
+        });
         break;
+
       default:
         break;        
     };
+
+
   };
 
 
