@@ -6,7 +6,7 @@ const Person = ({ person, selectRow, isSelected }) => {
   trClassName.push(person.age > 65 ? 'more-than-65-age' : '');
   trClassName.push(isSelected ? 'is-selected' : '');
   trClassName.push(person.sex === 'm' ? 'person--male' : 'person--female');
-  trClassName.push(person.children.length !== 0 ?
+  trClassName.push(person.children !== '-' ?
     person.sex === 'm' ? 'person--father' : 'person--mother'
     : ''
   );

@@ -31,7 +31,7 @@ class PeopleTable extends React.Component {
               man.father === person.name || man.mother === person.name
             ))
             .map(man => man.name)
-            .join(', ')
+            .join(', ') || '-'
         })),
     
         pointers: nextProps.people.map((person, index) => ({
