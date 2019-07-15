@@ -13,12 +13,13 @@ class PeopleTable extends React.Component {
 
 
   componentWillReceiveProps(nextProps, nextContent) {
-    if (this.props.people !== nextProps.people) {
+    const { people } = this.props;
+    if (people !== nextProps.people) {
       this.setState({
         people: nextProps.people.map((person, index) => ({
           ...person,
-          father: person.father ? person.father : '',
-          mother: person.mother ? person.mother : '',
+          father: person.father ? person.father : 'unknown',
+          mother: person.mother ? person.mother : 'unknown',
           id: index + 1,
           age: person.died - person.born,
           century: Math.floor(person.died / 100) + 1,
@@ -42,56 +43,36 @@ class PeopleTable extends React.Component {
     };
   };
 
-  sortByName = () => {
-    this.setState({
-      pointers: this.state.pointers.sort(
-        (a, b) => (
-          this.state.people[a.pointer].name.localeCompare(
-              this.state.people[b.pointer].name
+  sortFunc = (attribute) => {
+    const { people, pointers } = this.state;
+
+    switch (attribute) {
+      case 'name':
+        this.setState({
+          pointers: pointers.sort(
+            (a, b) => (
+              people[a.pointer].name.localeCompare(
+                  people[b.pointer].name
+                )
             )
-        )
-      )});
+        )});
+        break;
+      case 'id':  
+      case 'born':
+      case 'died':
+      case 'age':
+        this.setState({
+          pointers: pointers.sort(
+            (a, b) => (
+              people[a.pointer][attribute] - people[b.pointer][attribute]
+            )
+        )});
+        break;
+      default:
+        break;        
+    };
   };
 
-  sortById = () => {
-    this.setState({
-      pointers: this.state.pointers.sort(
-        (a, b) => (
-          this.state.people[a.pointer].id -
-            this.state.people[b.pointer].id
-        )
-      )});
-  };
-
-  sortByBorn = () => {
-    this.setState({
-      pointers: this.state.pointers.sort(
-        (a, b) => (
-          this.state.people[a.pointer].born -
-            this.state.people[b.pointer].born
-        )
-      )});
-  };
-
-  sortByDied = () => {
-    this.setState({
-      pointers: this.state.pointers.sort(
-        (a, b) => (
-          this.state.people[a.pointer].died -
-            this.state.people[b.pointer].died
-        )
-      )});
-  };
-
-  sortByAge = () => {
-    this.setState({
-      pointers: this.state.pointers.sort(
-        (a, b) => (
-          this.state.people[a.pointer].age-
-            this.state.people[b.pointer].age
-        )
-      )});
-  };
 
   filter = (event) => {
     this.setState({
@@ -128,14 +109,14 @@ class PeopleTable extends React.Component {
       <table className="people-table">
         <thead className="people-table__head">
           <tr>
-            <td onClick={this.sortById} className="sort-btn">Id</td>
-            <td onClick={this.sortByName} className="sort-btn">Name</td>
+            <td onClick={() => this.sortFunc('id')} className="sort-btn">Id</td>
+            <td onClick={() => this.sortFunc('name')} className="sort-btn">Name</td>
             <td>Sex</td>
-            <td onClick={this.sortByBorn} className="sort-btn">Born</td>
-            <td onClick={this.sortByDied} className="sort-btn">Died</td>
+            <td onClick={() => this.sortFunc('born')} className="sort-btn">Born</td>
+            <td onClick={() => this.sortFunc('died')} className="sort-btn">Died</td>
             <td>Mother</td>
             <td>Father</td>
-            <td onClick={this.sortByAge} className="sort-btn">Age</td>
+            <td onClick={() => this.sortFunc('age')} className="sort-btn">Age</td>
             <td>Century</td>
             <td>
               <div className="people-table__search-container">
