@@ -1,16 +1,10 @@
 import React from 'react';
 
 const Person = ({ person, selectRow, isSelected }) => {
-  let trBaseStyle = {};
-  trBaseStyle.border = person.age > 65 ? '2px solid green' : '';
-
-  let trNameStyle = {};
-  trNameStyle.fontWeight = person.born > 1800 ? 'bold' : '';
-  trNameStyle.textDecoration = person.born < 1650 ? 'line-through' : '';
-
-  let trSelectedStyle = { ...trBaseStyle, border: '3px solid blue' };
-
   let trClassName = [];
+
+  trClassName.push(person.age > 65 ? 'more-than-65-age' : '');
+  trClassName.push(isSelected ? 'is-selected' : '');
   trClassName.push(person.sex === 'm' ? 'person--male' : 'person--female');
   trClassName.push(person.children.length !== 0 ?
     person.sex === 'm' ? 'person--father' : 'person--mother'
@@ -18,15 +12,20 @@ const Person = ({ person, selectRow, isSelected }) => {
   );
   trClassName = trClassName.join(' ');
 
+  let personNameClassName = [];
+
+  personNameClassName.push(person.born > 1800 ? 'born-after-1800' : '');
+  personNameClassName.push(person.born < 1650 ? 'born-before-1650' : '');
+  personNameClassName = personNameClassName.join(' ');
+
   return (
     <tr
       className={trClassName}
-      style={isSelected ? trSelectedStyle : trBaseStyle}
       onClick={() => selectRow(person.id)}
     >
       <td>{person.id}</td>
       <td
-        style={trNameStyle}
+        className={personNameClassName}
       >
         {person.name}
       </td>
