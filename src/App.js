@@ -1,13 +1,19 @@
 import React from 'react';
-import { people } from './api/people';
 import PeopleTable from './PeopleTable';
 import NewPerson from './NewPerson';
+import { dataPeople } from './api/people';
+
 
 class App extends React.Component {
   state = {
-    people: [...people],
+    people: [],
     newPersonFormIsVisible: false
   }
+
+  async componentDidMount() {
+    const people = await dataPeople();
+    this.setState({ people: people });
+  };
 
   getFormVisible = () => {
     this.setState({ newPersonFormIsVisible: true });

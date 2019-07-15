@@ -2,30 +2,44 @@ import React from 'react';
 import Person from './Person';
 
 class PeopleTable extends React.Component {
-  state = {
-    people: this.props.people.map((person, index) => ({
-      ...person,
-      father: person.father ? person.father : '',
-      mother: person.mother ? person.mother : '',
-      id: index + 1,
-      age: person.died - person.born,
-      century: Math.floor(person.died / 100) + 1,
-      // формула для расчета столетия, которая указана в описании задачи,
-      // не совсем верна, так как Math.ceil(person.died / 100) при, например,
-      // 2000 (1900, 1800...) году даст 20 столетие, а не 21е, как ожидается
-      children: this.props.people
-        .filter(man => (
-          man.father === person.name || man.mother === person.name
-        ))
-        .map(man => man.name)
-        .join(', ')
-    })),
+  constructor(props) {
+    super(props);
 
-    pointers: this.props.people.map((person, index) => ({
-      pointer: index,
-      isVisible: true,
-      isSelected: false
-    }))
+    this.state = {
+      people: [],
+      pointers: []
+    };
+  };
+
+
+  componentWillReceiveProps(nextProps, nextContent) {
+    if (this.props.people !== nextProps.people) {
+      this.setState({
+        people: nextProps.people.map((person, index) => ({
+          ...person,
+          father: person.father ? person.father : '',
+          mother: person.mother ? person.mother : '',
+          id: index + 1,
+          age: person.died - person.born,
+          century: Math.floor(person.died / 100) + 1,
+          // формула для расчета столетия, которая указана в описании задачи,
+          // не совсем верна, так как Math.ceil(person.died / 100) при, например,
+          // 2000 (1900, 1800...) году даст 20 столетие, а не 21е, как ожидается
+          children: nextProps.people
+            .filter(man => (
+              man.father === person.name || man.mother === person.name
+            ))
+            .map(man => man.name)
+            .join(', ')
+        })),
+    
+        pointers: nextProps.people.map((person, index) => ({
+          pointer: index,
+          isVisible: true,
+          isSelected: false
+        }))
+      });
+    };
   };
 
   sortByName = () => {
