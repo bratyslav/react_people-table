@@ -46,40 +46,39 @@ class PeopleTable extends React.Component {
 
   sortFunc = (attribute) => {
     this.setState(prevState => {
-        if (prevState.sortedByAttribute !== attribute) { // атрибута нет или он изменен
-          switch (attribute) {
-            case 'name':
-              return { 
-                pointers: prevState.pointers.sort(
-                  (a, b) => (
-                    prevState.people[a.pointer].name.localeCompare(
-                      prevState.people[b.pointer].name
-                    )
-                  )
-                ),
-                sortedByAttribute: attribute
-              };
-    
-            case 'id':  
-            case 'born':
-            case 'died':
-            case 'age':
-              return {
-                pointers: prevState.pointers.sort(
-                  (a, b) => (
-                    prevState.people[a.pointer][attribute] 
-                    - prevState.people[b.pointer][attribute]
-                  )
-                ),
-                sortedByAttribute: attribute
-              };
-    
-            default:
-              break;
-          }    
-        } else { // реверс
-          return { pointers: prevState.pointers.reverse() }
-        }
+      const { people, pointers, sortedByAttribute } = prevState;
+
+      if (sortedByAttribute !== attribute) { // атрибута нет или он изменен
+        switch (attribute) {
+          case 'name':
+            return { 
+              pointers: pointers.sort(
+                (a, b) => (
+                  people[a.pointer].name.localeCompare(people[b.pointer].name)
+                )
+              ),
+              sortedByAttribute: attribute
+            };
+  
+          case 'id':  
+          case 'born':
+          case 'died':
+          case 'age':
+            return {
+              pointers: pointers.sort(
+                (a, b) => (
+                  people[a.pointer][attribute] - people[b.pointer][attribute]
+                )
+              ),
+              sortedByAttribute: attribute
+            };
+  
+          default:
+            break;
+        }    
+      } else { // реверс
+        return { pointers: pointers.reverse() }
+      }
     })
   }  
 
