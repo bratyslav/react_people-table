@@ -84,12 +84,13 @@ class PeopleTable extends React.Component {
 
   filter = (event) => {
     const { people, pointers } = this.state;
+    const { value } = event.target;
 
     this.setState({
       pointers: pointers.map(pointer => {
         const person = people[pointer.pointer];
 
-        const filterText = event.target.value.toLowerCase();
+        const filterText = value.toLowerCase();
         const stringToFilter = (
           person.name + person.mother + person.father + person.children
         ).toLowerCase();  
