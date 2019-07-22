@@ -8,7 +8,7 @@ class PeopleTable extends React.Component {
 
     this.state = {
       people: [],
-      pointers: [],
+      peoplePointers: [],
       sortedByAttribute: ''
     };
   };
@@ -34,7 +34,7 @@ class PeopleTable extends React.Component {
             .join(', ') || '-'
         })),
     
-        pointers: people.map((person, index) => ({
+        peoplePointers: people.map((person, index) => ({
           pointer: index,
           isVisible: true,
           isSelected: false
@@ -45,13 +45,13 @@ class PeopleTable extends React.Component {
 
   sortFunc = (attribute) => {
     this.setState(prevState => {
-      const { people, pointers, sortedByAttribute } = prevState;
+      const { people, peoplePointers, sortedByAttribute } = prevState;
 
       if (sortedByAttribute !== attribute) { // атрибута нет или он изменен
         switch (attribute) {
           case 'name':
             return { 
-              pointers: pointers.sort(
+              peoplePointers: peoplePointers.sort(
                 (a, b) => (
                   people[a.pointer].name.localeCompare(people[b.pointer].name)
                 )
@@ -64,7 +64,7 @@ class PeopleTable extends React.Component {
           case 'died':
           case 'age':
             return {
-              pointers: pointers.sort(
+              peoplePointers: peoplePointers.sort(
                 (a, b) => (
                   people[a.pointer][attribute] - people[b.pointer][attribute]
                 )
@@ -76,17 +76,17 @@ class PeopleTable extends React.Component {
             break;
         }    
       } else { // реверс
-        return { pointers: pointers.reverse() }
+        return { peoplePointers: peoplePointers.reverse() }
       }
     })
   }  
 
   filter = (event) => {
-    const { people, pointers } = this.state;
+    const { people, peoplePointers } = this.state;
     const { value } = event.target;
 
     this.setState({
-      pointers: pointers.map(pointer => {
+      peoplePointers: peoplePointers.map(pointer => {
         const person = people[pointer.pointer];
 
         const filterText = value.toLowerCase();
@@ -104,7 +104,7 @@ class PeopleTable extends React.Component {
 
   selectRow = (personId) => {
     this.setState({
-      pointers: this.state.pointers.map(pointer => (
+      peoplePointers: this.state.peoplePointers.map(pointer => (
         pointer.pointer + 1 === personId
         ? { ...pointer, isSelected: true }
         : { ...pointer, isSelected: false }
@@ -113,7 +113,7 @@ class PeopleTable extends React.Component {
   }
 
   render() {
-    const { people, pointers } = this.state;
+    const { people, peoplePointers } = this.state;
 
     return (
       <table className="people-table">
@@ -147,7 +147,7 @@ class PeopleTable extends React.Component {
         </thead>
         <tbody>
           {
-            pointers
+            peoplePointers
               .filter(pointer => {
                 return pointer.isVisible;
               })

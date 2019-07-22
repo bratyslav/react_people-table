@@ -15,14 +15,8 @@ class App extends React.Component {
     this.setState({ people });
   };
 
-  getFormVisible = () => {
-    this.setState({ newPersonFormIsVisible: true });
-  };
-
-  closeForm = () => {
-    this.setState({
-      newPersonFormIsVisible: false
-    });
+  toggleFormVisible = (isVisible) => {
+    this.setState({ newPersonFormIsVisible: isVisible });
   };
 
   render() {
@@ -38,7 +32,7 @@ class App extends React.Component {
           </header>
           <button
             className="header__add-person-button"
-            onClick={this.getFormVisible}
+            onClick={() => this.toggleFormVisible(true)}
           >
             Add person
           </button>
@@ -48,7 +42,7 @@ class App extends React.Component {
 
         <NewPerson
           isVisible={newPersonFormIsVisible}
-          close={this.closeForm}
+          close={() => this.toggleFormVisible(false)}
         />
       </div>
     );
