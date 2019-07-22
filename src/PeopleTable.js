@@ -14,22 +14,19 @@ class PeopleTable extends React.Component {
   };
 
 
-  componentWillReceiveProps(nextProps, nextContent) {
+  componentDidUpdate(prevProps, prevState) {
     const { people } = this.props;
 
-    if (people !== nextProps.people) {
+    if (people !== prevProps.people) {
       this.setState({
-        people: nextProps.people.map((person, index) => ({
+        people: people.map((person, index) => ({
           ...person,
           father: person.father ? person.father : 'unknown',
           mother: person.mother ? person.mother : 'unknown',
           id: index + 1,
           age: person.died - person.born,
-          century: Math.floor(person.died / 100) + 1,
-          // формула для расчета столетия, которая указана в описании задачи,
-          // не совсем верна, так как Math.ceil(person.died / 100) при, например,
-          // 2000 (1900, 1800...) году даст 20 столетие, а не 21е, как ожидается
-          children: nextProps.people
+          century: Math.ceil(person.died / 100),
+          children: people
             .filter(man => (
               man.father === person.name || man.mother === person.name
             ))
@@ -37,7 +34,7 @@ class PeopleTable extends React.Component {
             .join(', ') || '-'
         })),
     
-        pointers: nextProps.people.map((person, index) => ({
+        pointers: people.map((person, index) => ({
           pointer: index,
           isVisible: true,
           isSelected: false

@@ -1,7 +1,7 @@
 import React from 'react';
 import PeopleTable from './PeopleTable';
 import NewPerson from './NewPerson';
-import { dataPeople } from './api/people';
+import { getDataPeople } from './api/people';
 
 
 class App extends React.Component {
@@ -11,8 +11,8 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    const people = await dataPeople();
-    this.setState({ people: people });
+    const people = await getDataPeople();
+    this.setState({ people });
   };
 
   getFormVisible = () => {

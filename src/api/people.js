@@ -1,4 +1,4 @@
-export const dataPeople = async() => {
+export const getDataPeople = async() => {
   const url = `https://mate-academy.github.io/react_people-table/api/people.json`;
   const response = await fetch(url);
   const people = await response.json();
