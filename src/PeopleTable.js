@@ -8,7 +8,7 @@ class PeopleTable extends React.Component {
     this.state = {
       people: [],
       pointers: [],
-      sortedBy: { attribute: '', wasSorted: false }
+      sortedByAttribute: ''
     };
   };
 
@@ -45,87 +45,43 @@ class PeopleTable extends React.Component {
   };
 
   sortFunc = (attribute) => {
-    const { people, pointers, sortedBy } = this.state;
-    const sortedByNamePointers = () => pointers.sort(
-      (a, b) => (
-        people[a.pointer].name.localeCompare(
-            people[b.pointer].name
-          )
-      ));
-    const sortedByNumberPointers = () => pointers.sort(
-      (a, b) => (
-        people[a.pointer][attribute] - people[b.pointer][attribute]
-    ))  
-
-
-    if (!sortedBy.attribute) {
-      this.setState({
-        sortedBy: { attribute: attribute, wasSorted: false }
-      });
-    };
-
-    // дальше проверка нужна, чтобы сортировка сначала шла
-    // в направлении сверху вниз, каждый раз, когда пользователь
-    // изменяет атрибут сортировки
-    if (sortedBy.attribute !== attribute) {
-      this.setState({
-        sortedBy: { attribute: attribute, wasSorted: false }
-      });
-      // тут не меняется значение wasSorted
-      // из-за асинхронного обновления состояния (как я думаю),
-      // из-за чего функция дальше работает не совсем корректно
-      // функциональный setState тоже не помогает:
-      //
-      // if (sortedBy.attribute !== attribute) {
-      //   this.setState(() => ({
-      //     sortedBy: { attribute: attribute, wasSorted: false }
-      //   }));
-      // };
-      //
-      // так что тут я застрял, помогите, пжлста :)
-    };
-
-    switch (attribute) {
-      case 'name':
-        if (!sortedBy.wasSorted) {
-          this.setState({
-            pointers: sortedByNamePointers(),
-            sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
-          });
-          break;
-        };
-
-        this.setState({
-          pointers: sortedByNamePointers().reverse(),
-          sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
-        });
-        break;
-
-      case 'id':  
-      case 'born':
-      case 'died':
-      case 'age':
-        if (!sortedBy.wasSorted) {
-          this.setState({
-            pointers: sortedByNumberPointers(),
-            sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
-          });
-          break;
-        };
-
-        this.setState({
-          pointers: sortedByNumberPointers().reverse(),
-          sortedBy: { attribute: attribute, wasSorted: !sortedBy.wasSorted }  
-        });
-        break;
-
-      default:
-        break;        
-    };
-
-
-  };
-
+    this.setState(prevState => {
+        if (prevState.sortedByAttribute !== attribute) { // атрибута нет или он изменен
+          switch (attribute) {
+            case 'name':
+              return { 
+                pointers: prevState.pointers.sort(
+                  (a, b) => (
+                    prevState.people[a.pointer].name.localeCompare(
+                      prevState.people[b.pointer].name
+                    )
+                  )
+                ),
+                sortedByAttribute: attribute
+              };
+    
+            case 'id':  
+            case 'born':
+            case 'died':
+            case 'age':
+              return {
+                pointers: prevState.pointers.sort(
+                  (a, b) => (
+                    prevState.people[a.pointer][attribute] 
+                    - prevState.people[b.pointer][attribute]
+                  )
+                ),
+                sortedByAttribute: attribute
+              };
+    
+            default:
+              break;
+          }    
+        } else { // реверс
+          return { pointers: prevState.pointers.reverse() }
+        }
+    })
+  }  
 
   filter = (event) => {
     const { people, pointers } = this.state;
