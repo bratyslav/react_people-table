@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const NewPerson = ({ isVisible, close }) => (
   <form
@@ -97,5 +98,10 @@ const NewPerson = ({ isVisible, close }) => (
     </div>
   </form>
 );
+
+NewPerson.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired
+};
 
 export default NewPerson;

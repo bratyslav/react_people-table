@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Person = ({ person, selectRow, isSelected }) => {
   let trClassName = [];
@@ -39,6 +40,12 @@ const Person = ({ person, selectRow, isSelected }) => {
       <td>{person.children}</td>
     </tr>
   );
+};
+
+Person.propTypes = {
+  person: PropTypes.object.isRequired,
+  selectRow: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool.isRequired
 };
 
 export default Person;

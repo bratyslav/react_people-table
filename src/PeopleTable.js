@@ -1,5 +1,6 @@
 import React from 'react';
 import Person from './Person';
+import PropTypes from 'prop-types';
 
 class PeopleTable extends React.Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class PeopleTable extends React.Component {
 
   componentWillReceiveProps(nextProps, nextContent) {
     const { people } = this.props;
+
     if (people !== nextProps.people) {
       this.setState({
         people: nextProps.people.map((person, index) => ({
@@ -157,6 +159,7 @@ class PeopleTable extends React.Component {
                   person={people[pointer.pointer]}
                   selectRow={this.selectRow}
                   isSelected={pointer.isSelected}
+                  key={pointer.pointer}
                 />
               ))
           }
@@ -164,6 +167,10 @@ class PeopleTable extends React.Component {
       </table>
     );
   };
+};
+
+PeopleTable.propTypes = {
+  people: PropTypes.array.isRequired
 };
 
 export default PeopleTable;
