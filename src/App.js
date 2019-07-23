@@ -1,7 +1,7 @@
 import React from 'react';
 import PeopleTable from './PeopleTable';
 import NewPerson from './NewPerson';
-import { getDataPeople } from './api/people';
+import { getData } from './api/getData';
 
 
 class App extends React.Component {
@@ -11,7 +11,7 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    const people = await getDataPeople();
+    const people = await getData();
     this.setState({ people });
   };
 

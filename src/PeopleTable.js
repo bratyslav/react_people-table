@@ -19,20 +19,7 @@ class PeopleTable extends React.Component {
 
     if (people !== prevProps.people) {
       this.setState({
-        people: people.map((person, index) => ({
-          ...person,
-          father: person.father ? person.father : 'unknown',
-          mother: person.mother ? person.mother : 'unknown',
-          id: index + 1,
-          age: person.died - person.born,
-          century: Math.ceil(person.died / 100),
-          children: people
-            .filter(man => (
-              man.father === person.name || man.mother === person.name
-            ))
-            .map(man => man.name)
-            .join(', ') || '-'
-        })),
+        people: [...people],
     
         peoplePointers: people.map((person, index) => ({
           pointer: index,
