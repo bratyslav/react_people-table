@@ -31,40 +31,39 @@ class PeopleTable extends React.Component {
 
   sortPeople = (attribute) => {
     this.setState(prevState => {
-      const { people, visiblePeople, sortedByAttribute } = prevState;
+      const { visiblePeople, sortedByAttribute } = prevState;
 
       if (sortedByAttribute !== attribute) { // атрибута нет или он изменен
-        switch (attribute) {
-          case 'name':
-            return { 
-              visiblePeople: visiblePeople.sort(
-                (a, b) => (
-                  people[a.pointer].name.localeCompare(people[b.pointer].name)
-                )
-              ),
-              sortedByAttribute: attribute
-            };
-  
-          case 'id':  
-          case 'born':
-          case 'died':
-          case 'age':
-            return {
-              visiblePeople: visiblePeople.sort(
-                (a, b) => (
-                  people[a.pointer][attribute] - people[b.pointer][attribute]
-                )
-              ),
-              sortedByAttribute: attribute
-            };
-  
-          default:
-            break;
-        }    
+        return {
+          visiblePeople: visiblePeople.sort(this.getSortCallback(attribute)),
+          sortedByAttribute: attribute
+        };
       } else { // реверс
         return { visiblePeople: visiblePeople.reverse() }
       }
     })
+  };
+
+  getSortCallback = (attribute) => {
+    const { people } = this.state;
+
+    switch (attribute) {
+      case 'name':
+        return (a, b) => (
+          people[a.pointer].name.localeCompare(people[b.pointer].name)
+        );
+
+      case 'id':  
+      case 'born':
+      case 'died':
+      case 'age':
+        return (a, b) => (
+          people[a.pointer][attribute] - people[b.pointer][attribute]
+        );
+
+      default:
+        break;
+    };
   };
 
   filter = (event) => {
