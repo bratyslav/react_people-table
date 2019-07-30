@@ -1,23 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+let classNames = require('classnames');
 
 const Person = ({ person, selectRow, isSelected }) => {
-  let trClassName = [];
+  const trClassName = classNames({
+    'more-than-65-age': person.age > 65,
+    'is-selected': isSelected,
+    'person--male': person.sex === 'm',
+    'person--female': person.sex === 'f',
+    'person--father': person.children !== '-' && person.sex === 'm',
+    'person--mother': person.children !== '-' && person.sex === 'f'
+  });
 
-  trClassName.push(person.age > 65 ? 'more-than-65-age' : '');
-  trClassName.push(isSelected ? 'is-selected' : '');
-  trClassName.push(person.sex === 'm' ? 'person--male' : 'person--female');
-  trClassName.push(person.children !== '-' ?
-    person.sex === 'm' ? 'person--father' : 'person--mother'
-    : ''
-  );
-  trClassName = trClassName.join(' ');
-
-  let personNameClassName = [];
-
-  personNameClassName.push(person.born > 1800 ? 'born-after-1800' : '');
-  personNameClassName.push(person.born < 1650 ? 'born-before-1650' : '');
-  personNameClassName = personNameClassName.join(' ');
+  const personNameClassName = classNames({
+    'born-after-1800': person.born > 1800,
+    'born-before-1650': person.born < 1650
+  });
 
   return (
     <tr
