@@ -8,11 +8,10 @@ class PeopleTable extends React.Component {
 
     this.state = {
       people: [],
-      peoplePointers: [],
+      visiblePeople: [],
       sortedByAttribute: ''
     };
   };
-
 
   componentDidUpdate(prevProps, prevState) {
     const { people } = this.props;
@@ -21,7 +20,7 @@ class PeopleTable extends React.Component {
       this.setState({
         people: [...people],
     
-        peoplePointers: people.map((person, index) => ({
+        visiblePeople: people.map((person, index) => ({
           pointer: index,
           isVisible: true,
           isSelected: false
@@ -30,15 +29,15 @@ class PeopleTable extends React.Component {
     };
   };
 
-  sortFunc = (attribute) => {
+  sortPeople = (attribute) => {
     this.setState(prevState => {
-      const { people, peoplePointers, sortedByAttribute } = prevState;
+      const { people, visiblePeople, sortedByAttribute } = prevState;
 
       if (sortedByAttribute !== attribute) { // атрибута нет или он изменен
         switch (attribute) {
           case 'name':
             return { 
-              peoplePointers: peoplePointers.sort(
+              visiblePeople: visiblePeople.sort(
                 (a, b) => (
                   people[a.pointer].name.localeCompare(people[b.pointer].name)
                 )
@@ -51,7 +50,7 @@ class PeopleTable extends React.Component {
           case 'died':
           case 'age':
             return {
-              peoplePointers: peoplePointers.sort(
+              visiblePeople: visiblePeople.sort(
                 (a, b) => (
                   people[a.pointer][attribute] - people[b.pointer][attribute]
                 )
@@ -63,27 +62,23 @@ class PeopleTable extends React.Component {
             break;
         }    
       } else { // реверс
-        return { peoplePointers: peoplePointers.reverse() }
+        return { visiblePeople: visiblePeople.reverse() }
       }
     })
-  }  
+  };
 
   filter = (event) => {
-    const { people, peoplePointers } = this.state;
-    const { value } = event.target;
+    const { people, visiblePeople } = this.state;
+    const filterText = event.target.value.toLowerCase();
 
     this.setState({
-      peoplePointers: peoplePointers.map(pointer => {
-        const person = people[pointer.pointer];
-
-        const filterText = value.toLowerCase();
+      visiblePeople: visiblePeople.map(man => {
+        const person = people[man.pointer];
         const stringToFilter = (
           person.name + person.mother + person.father + person.children
         ).toLowerCase();  
 
-        return stringToFilter.indexOf(filterText) !== -1
-          ? { ...pointer, isVisible: true }
-          : { ...pointer, isVisible: false }
+        return { ...man, isVisible: stringToFilter.includes(filterText) };
       })
     });
 
@@ -91,29 +86,27 @@ class PeopleTable extends React.Component {
 
   selectRow = (personId) => {
     this.setState({
-      peoplePointers: this.state.peoplePointers.map(pointer => (
-        pointer.pointer + 1 === personId
-        ? { ...pointer, isSelected: true }
-        : { ...pointer, isSelected: false }
+      visiblePeople: this.state.visiblePeople.map(man => (
+        { ...man, isSelected: man.pointer + 1 === personId }
       ))
     });
-  }
+  };
 
   render() {
-    const { people, peoplePointers } = this.state;
+    const { people, visiblePeople } = this.state;
 
     return (
       <table className="people-table">
         <thead className="people-table__head">
           <tr>
-            <td onClick={() => this.sortFunc('id')} className="sort-btn">Id</td>
-            <td onClick={() => this.sortFunc('name')} className="sort-btn">Name</td>
+            <td onClick={() => this.sortPeople('id')} className="sort-btn">Id</td>
+            <td onClick={() => this.sortPeople('name')} className="sort-btn">Name</td>
             <td>Sex</td>
-            <td onClick={() => this.sortFunc('born')} className="sort-btn">Born</td>
-            <td onClick={() => this.sortFunc('died')} className="sort-btn">Died</td>
+            <td onClick={() => this.sortPeople('born')} className="sort-btn">Born</td>
+            <td onClick={() => this.sortPeople('died')} className="sort-btn">Died</td>
             <td>Mother</td>
             <td>Father</td>
-            <td onClick={() => this.sortFunc('age')} className="sort-btn">Age</td>
+            <td onClick={() => this.sortPeople('age')} className="sort-btn">Age</td>
             <td>Century</td>
             <td>
               <div className="people-table__search-container">
@@ -134,16 +127,16 @@ class PeopleTable extends React.Component {
         </thead>
         <tbody>
           {
-            peoplePointers
-              .filter(pointer => {
-                return pointer.isVisible;
+            visiblePeople
+              .filter(man => {
+                return man.isVisible;
               })
-              .map(pointer => (
+              .map(man => (
                 <Person
-                  person={people[pointer.pointer]}
+                  person={people[man.pointer]}
                   selectRow={this.selectRow}
-                  isSelected={pointer.isSelected}
-                  key={pointer.pointer}
+                  isSelected={man.isSelected}
+                  key={man.pointer}
                 />
               ))
           }
